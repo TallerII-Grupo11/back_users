@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 1
     database_url: str
     version_prefix: str
+    port: int = 5000
 
     class Config:
         BASE_DIR = os.path.dirname(os.path.abspath("../.env"))

@@ -3,7 +3,7 @@ FROM python:3.9
 # install poetry
 RUN pip install poetry
 # copy project requirement files here to ensure they will be cached.
-WORKDIR /root
+WORKDIR /
 ADD app/ app/
 COPY docker/entrypoint.sh poetry.lock pyproject.toml ./
 
