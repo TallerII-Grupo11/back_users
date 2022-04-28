@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/TallerII-Grupo11/back_users/branch/main/graph/badge.svg?token=X5YSLG3P2G)](https://codecov.io/gh/TallerII-Grupo11/back_users)
 [![Linters](https://github.com/TallerII-Grupo11/back_users/actions/workflows/linter.yaml/badge.svg)](https://github.com/TallerII-Grupo11/back_users/actions/workflows/linter.yaml)
 [![Tests](https://github.com/TallerII-Grupo11/back_users/actions/workflows/test.yaml/badge.svg)](https://github.com/TallerII-Grupo11/back_users/actions/workflows/test.yaml)
-[![Deploy](https://github.com/TallerII-Grupo11/back_users/actions/workflows/test.yaml/badge.svg)](https://github.com/TallerII-Grupo11/back_users/actions/workflows/test.yaml)
+[![Deploy](https://github.com/TallerII-Grupo11/back_users/actions/workflows/deploy.yaml/badge.svg)](https://github.com/TallerII-Grupo11/back_users/actions/workflows/deploy.yaml)
 
 ### Documentation
 
