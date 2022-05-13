@@ -12,11 +12,12 @@ class UserId(BaseModel):
 
 
 class UserResponse(BaseModel):
-    username: str
-    full_name: Optional[str]
+    first_name: str
+    last_name: str
     email: EmailStr
     id: UserId
     status: Optional[str]
+    role: Optional[str]
 
     @validator('id')
     def map_id(cls, v):

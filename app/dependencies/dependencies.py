@@ -28,19 +28,19 @@ def get_session(settings: Settings = Depends(get_settings)) -> Iterator[Session]
 
 
 def user_repository_dependency(
-        session: Session = Depends(get_session),
+    session: Session = Depends(get_session),
 ) -> UserRepository:
     return SQLUserRepository(session)
 
 
 def user_uow_dependency(
-        session: Session = Depends(get_session),
-        user_repository: UserRepository = Depends(user_repository_dependency),
+    session: Session = Depends(get_session),
+    user_repository: UserRepository = Depends(user_repository_dependency),
 ) -> AbstractUserUnitOfWork:
     return UserUnitOfWork(user_repository, session)
 
 
 def user_usecases_dependency(
-        user_uow: AbstractUserUnitOfWork = Depends(user_uow_dependency),
+    user_uow: AbstractUserUnitOfWork = Depends(user_uow_dependency),
 ) -> UserUseCases:
     return UserUseCases(user_uow)

@@ -23,7 +23,13 @@ class SQLUserRepository(UserRepository):
     def update(self, user: User):
         try:
             self.session.query(UserDTO).filter_by(id=user.id.id).update(
-                {UserDTO.full_name: user.full_name, UserDTO.location: user.location, UserDTO.status: str(user.status)}
+                {
+                    UserDTO.first_name: user.first_name,
+                    UserDTO.last_name: user.last_name,
+                    UserDTO.location: user.location,
+                    UserDTO.status: str(user.status),
+                    UserDTO.role: str(user.role),
+                }
             )
 
         except Exception:
@@ -32,15 +38,6 @@ class SQLUserRepository(UserRepository):
     def find_by_id(self, user_id: UserId) -> User:
         try:
             user_dto = self.session.query(UserDTO).filter_by(id=user_id.id).one()
-        except NoResultFound:
-            return None
-        except Exception:
-            raise
-        return user_dto.to_entity()
-
-    def find_by_username(self, username: str) -> User:
-        try:
-            user_dto = self.session.query(UserDTO).filter_by(username=username).one()
         except NoResultFound:
             return None
         except Exception:
@@ -56,25 +53,12 @@ class SQLUserRepository(UserRepository):
             raise
         return user_dto.to_entity()
 
-    def find_by_email_or_username(self, email: str, username: str) -> User:
-        try:
-            user_dto = (
-                self.session.query(UserDTO)
-                    .filter((UserDTO.email == email) | (UserDTO.username == username))
-                    .one()
-            )
-        except NoResultFound:
-            return None
-        except Exception:
-            raise
-        return user_dto.to_entity()
-
     def all(
-            self, q: Optional[str] = None, offset: int = 0, limit: int = 100
+        self, q: Optional[str] = None, offset: int = 0, limit: int = 100
     ) -> List[User]:
         query = self.session.query(UserDTO)
         if q:
-            query = query.filter((UserDTO.email == q) | (UserDTO.username == q))
+            query = query.filter(UserDTO.email == q)
         return [u.to_entity() for u in query.limit(limit).offset(offset)]
 
     def total(self) -> int:

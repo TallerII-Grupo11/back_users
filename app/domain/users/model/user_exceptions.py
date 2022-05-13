@@ -20,6 +20,13 @@ class UserAlreadyHadStatusError(Exception):
         return UserAlreadyHadStatusError.message
 
 
+class UserAlreadyHadRoleError(Exception):
+    message = "This User already had this role."
+
+    def __str__(self):
+        return UserAlreadyHadRoleError.message
+
+
 class UsersBlockedException(Exception):
     message = "This User is blocked."
 

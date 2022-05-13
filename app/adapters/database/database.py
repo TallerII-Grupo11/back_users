@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.adapters.database.users.model import UserDTO
 from app.conf.config import Settings
 
 
