@@ -30,12 +30,14 @@ class UserUseCases:
             if user:
                 raise UserAlreadyExistException()
             user_id = UserId(str(uuid.uuid4()))
+            # user_id = UserId(user_command.firebase_id)
             user = User(
                 id=user_id,
                 first_name=user_command.first_name,
                 last_name=user_command.last_name,
                 email=user_command.email,
                 location=user_command.location,
+                role=user_command.role,
             )
             self.user_uow.repository.save(user)
             self.user_uow.commit()

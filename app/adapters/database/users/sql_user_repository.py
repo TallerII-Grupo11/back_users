@@ -27,8 +27,8 @@ class SQLUserRepository(UserRepository):
                     UserDTO.first_name: user.first_name,
                     UserDTO.last_name: user.last_name,
                     UserDTO.location: user.location,
-                    UserDTO.status: str(user.status),
-                    UserDTO.role: str(user.role),
+                    UserDTO.status: str(user.status.value),
+                    UserDTO.role: str(user.role.value),
                 }
             )
 

@@ -4,7 +4,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 from pydantic.schema import date
 
-from app.domain.users.model.user_exceptions import UserAlreadyHadStatusError
+from app.domain.users.model.user_exceptions import UserAlreadyHadStatusError, UserAlreadyHadRoleError
 from app.domain.users.model.user_id import UserId
 
 
@@ -38,12 +38,12 @@ class User(BaseModel):
     def update_status(self, status: UserStatus):
         if self.status == status:
             raise UserAlreadyHadStatusError()
-        self.status = status.value
+        self.status = status
 
     def update_role(self, role: UserRole):
         if self.role == role:
-            raise UserAlreadyHadStatusError()
-        self.role = role.value
+            raise UserAlreadyHadRoleError()
+        self.role = role
 
     def is_blocked(self):
         return UserStatus.BLOCKED == self.status
