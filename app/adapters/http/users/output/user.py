@@ -12,10 +12,11 @@ class UserId(BaseModel):
 
 
 class UserResponse(BaseModel):
+    id: UserId
+    firebase_id: str
+    email: EmailStr
     first_name: str
     last_name: str
-    email: EmailStr
-    id: UserId
     status: Optional[str]
     role: Optional[str]
 

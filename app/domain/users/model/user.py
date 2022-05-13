@@ -20,6 +20,7 @@ class UserRole(str, Enum):
 
 class User(BaseModel):
     id: UserId = Field(example="123e4567-e89b-12d3-a456-426614174000")
+    firebase_id: str = Field(example="abc123fg-e14j-19jf-12fo-412319014050")
     email: str = Field(example="juanperez@mail.com")
     first_name: str = Field(example="Juan")
     last_name: str = Field(example="Perez")

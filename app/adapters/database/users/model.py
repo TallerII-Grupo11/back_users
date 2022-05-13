@@ -14,6 +14,7 @@ class UserDTO(Base):
     __tablename__ = "users"
 
     id: Union[str, Column] = Column(String, primary_key=True, index=True)
+    firebase_id: Union[str, Column] = Column(String, unique=True, index=True)
     email: Union[str, Column] = Column(String, unique=True, index=True)
     first_name: Union[str, Column] = Column(String)
     last_name: Union[str, Column] = Column(String)
@@ -32,6 +33,7 @@ class UserDTO(Base):
     def from_entity(user: User) -> "UserDTO":
         return UserDTO(
             id=user.id.id,
+            firebase_id=user.firebase_id,
             email=user.email,
             first_name=user.first_name,
             last_name=user.last_name,
@@ -44,6 +46,7 @@ class UserDTO(Base):
     def to_entity(self) -> User:
         return User(
             id=UserId(self.id),
+            firebase_id=self.firebase_id,
             email=self.email,
             first_name=self.first_name,
             last_name=self.last_name,

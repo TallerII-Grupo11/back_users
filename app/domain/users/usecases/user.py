@@ -33,6 +33,7 @@ class UserUseCases:
             # user_id = UserId(user_command.firebase_id)
             user = User(
                 id=user_id,
+                firebase_id=user_command.firebase_id,
                 first_name=user_command.first_name,
                 last_name=user_command.last_name,
                 email=user_command.email,

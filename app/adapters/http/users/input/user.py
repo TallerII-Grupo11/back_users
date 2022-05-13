@@ -6,7 +6,7 @@ from app.domain.users.model.user import UserStatus, UserRole
 
 
 class UserRequest(BaseModel):
-    # firebase_id: str = Field(example="123e4567-e89b-12d3-a456-426614174000")
+    firebase_id: str = Field(example="123e4567-e89b-12d3-a456-426614174000")
     first_name: str = Field(example="Juan")
     # password: str = Field(example="secure")
     last_name: str = Field(example="Perez")
@@ -17,7 +17,7 @@ class UserRequest(BaseModel):
     def to_create_user_command(self):
         return UserCreateCommand(
             email=self.email,
-            # firebase_id=self.firebase_id,
+            firebase_id=self.firebase_id,
             role=self.role,
             # password=self.password,
             first_name=self.first_name,
