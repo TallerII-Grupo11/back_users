@@ -5,6 +5,7 @@ from fastapi import Depends, APIRouter, status
 
 from app.adapters.http.users.input.user import (
     UserRequest,
+    UserUpdateRequest,
     UserStatusRequest,
     UserRoleRequest,
 )
@@ -67,6 +68,21 @@ async def get_user(
     logger.info("Get user by id called")
     user = user_usecases.find_by_id(user_id)
     return user
+
+
+@router.put(
+    '/users/{user_id}',
+    response_model=UserResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def update_users(
+    user_id: str,
+    user_request: UserUpdateRequest,
+    # user_from_token=Depends(user_token_validation),
+    user_usecases: UserUseCases = Depends(user_usecases_dependency),
+):
+    logger.info("Update user called")
+    return user_usecases.update(user_request.to_update_user_command(user_id))
 
 
 @router.patch(

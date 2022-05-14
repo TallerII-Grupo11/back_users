@@ -4,7 +4,10 @@ from enum import Enum
 from pydantic import BaseModel, Field
 from pydantic.schema import date
 
-from app.domain.users.model.user_exceptions import UserAlreadyHadStatusError, UserAlreadyHadRoleError
+from app.domain.users.model.user_exceptions import (
+    UserAlreadyHadStatusError,
+    UserAlreadyHadRoleError,
+)
 from app.domain.users.model.user_id import UserId
 
 
@@ -35,6 +38,15 @@ class User(BaseModel):
 
     def __eq__(self, other):
         return self.id == other.id
+
+    def update(self, user: "User"):
+        self.update_status(user.status)
+        self.update_role(user.role)
+        self.firebase_id = user.firebase_id
+        self.email = user.email
+        self.first_name = user.first_name
+        self.last_name = user.last_name
+        self.location = user.location
 
     def update_status(self, status: UserStatus):
         if self.status == status:

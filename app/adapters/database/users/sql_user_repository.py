@@ -24,8 +24,10 @@ class SQLUserRepository(UserRepository):
         try:
             self.session.query(UserDTO).filter_by(id=user.id.id).update(
                 {
+                    UserDTO.firebase_id: user.firebase_id,
                     UserDTO.first_name: user.first_name,
                     UserDTO.last_name: user.last_name,
+                    UserDTO.email: user.email,
                     UserDTO.location: user.location,
                     UserDTO.status: str(user.status.value),
                     UserDTO.role: str(user.role.value),
