@@ -10,7 +10,7 @@ class UserCreateCommand(BaseModel):
     firebase_id: str
     first_name: str
     last_name: str
-    role: Optional[str] = UserRole.LISTENER
+    role: Optional[UserRole] = UserRole.LISTENER
     email: EmailStr
     # password: str
     location: Optional[str] = None

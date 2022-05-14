@@ -1,4 +1,4 @@
-from pydantic import EmailStr, Field
+from pydantic import EmailStr, Field, validator
 from pydantic.main import BaseModel
 from typing import Optional
 from app.domain.users.command.user_create_command import UserCreateCommand
@@ -10,7 +10,7 @@ class UserRequest(BaseModel):
     first_name: str = Field(example="Juan")
     # password: str = Field(example="secure")
     last_name: str = Field(example="Perez")
-    role: Optional[str] = Field(example="LISTENER")
+    role: Optional[UserRole] = Field(example="LISTENER")
     location: Optional[str] = Field(example="Buenos Aires, Argentina")
     email: EmailStr = Field(example="username@mail.com")
 
