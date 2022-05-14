@@ -23,9 +23,12 @@ logger = logging.getLogger(__name__)
 
 
 async def user_query(
-    q: Optional[str] = None, offset: int = 0, limit: int = 100
+    firebase_id: Optional[str] = None,
+    email: Optional[str] = None,
+    offset: int = 0,
+    limit: int = 100,
 ) -> UserQuery:
-    return UserQuery(q=q, offset=offset, limit=limit)
+    return UserQuery(firebase_id=firebase_id, email=email, offset=offset, limit=limit)
 
 
 @router.get(
@@ -34,7 +37,6 @@ async def user_query(
     status_code=status.HTTP_200_OK,
 )
 async def get_users(
-    # user_from_token=Depends(user_token_validation),
     user_query: Optional[UserQuery] = Depends(user_query),
     user_usecases: UserUseCases = Depends(user_usecases_dependency),
 ):

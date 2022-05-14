@@ -56,11 +56,24 @@ class SQLUserRepository(UserRepository):
         return user_dto.to_entity()
 
     def all(
-        self, q: Optional[str] = None, offset: int = 0, limit: int = 100
+        self,
+        firebase_id: Optional[str] = None,
+        email: Optional[str] = None,
+        offset: int = 0,
+        limit: int = 100,
     ) -> List[User]:
         query = self.session.query(UserDTO)
-        if q:
-            query = query.filter(UserDTO.email == q)
+        print(f'email -> {email}')
+        print(f'firebase -> {firebase_id}')
+        if firebase_id:
+            query = query.filter_by(firebase_id=firebase_id)
+        if email:
+            query = query.filter(UserDTO.email == email)
+        if firebase_id and email:
+            query = query.filter(UserDTO.firebase_id == firebase_id).filter(
+                UserDTO.email == email
+            )
+
         return [u.to_entity() for u in query.limit(limit).offset(offset)]
 
     def total(self) -> int:
