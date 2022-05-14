@@ -22,7 +22,10 @@ class UserUseCases:
 
     def list(self, user_query: UserQuery) -> List[User]:
         return self.user_uow.repository.all(
-            user_query.q, user_query.offset, user_query.limit
+            user_query.firebase_id,
+            user_query.email,
+            user_query.offset,
+            user_query.limit,
         )
 
     def register(self, user_command: UserCreateCommand) -> User:

@@ -4,6 +4,7 @@ from pydantic.main import BaseModel
 
 
 class UserQuery(BaseModel):
-    q: Optional[str] = None
+    firebase_id: Optional[str] = None
+    email: Optional[str] = None
     offset: int = 0
     limit: int = 100
