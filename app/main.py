@@ -3,7 +3,27 @@ import uvicorn
 
 from app.adapters.http.health import health_controller
 from fastapi import FastAPI
+from fastapi_sqlalchemy import DBSessionMiddleware
 import logging.config
+
+from app.adapters.http.users import users_controller
+from app.adapters.http.users.exceptions_handler import (
+    user_already_exist_exception_handler,
+    user_already_had_status_exception_handler,
+    user_already_had_role_exception_handler,
+    user_not_found_exception_handler,
+    user_blocked_exception_handler,
+    wrong_credentials_exception_handler,
+)
+
+from app.domain.users.model.user_exceptions import (
+    UserAlreadyExistException,
+    UserAlreadyHadStatusError,
+    UserAlreadyHadRoleError,
+    UsersNotFoundError,
+    InvalidCredentialsError,
+    UsersBlockedException,
+)
 
 from app.conf.config import Settings
 
@@ -14,6 +34,8 @@ settings = Settings()
 app = FastAPI(
     version=settings.version, title=settings.title, description=settings.description
 )
+
+app.add_middleware(DBSessionMiddleware, db_url=settings.database_url)
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +50,22 @@ async def shutdown():
     logger.info("Shutdown APP")
 
 
+app.include_router(users_controller.router)
 app.include_router(health_controller.router)
+
+app.add_exception_handler(
+    UserAlreadyExistException, user_already_exist_exception_handler
+)
+app.add_exception_handler(
+    UserAlreadyHadStatusError, user_already_had_status_exception_handler
+)
+app.add_exception_handler(
+    UserAlreadyHadRoleError, user_already_had_role_exception_handler
+)
+app.add_exception_handler(UsersNotFoundError, user_not_found_exception_handler)
+app.add_exception_handler(InvalidCredentialsError, wrong_credentials_exception_handler)
+
+app.add_exception_handler(UsersBlockedException, user_blocked_exception_handler)
 
 
 if __name__ == "__main__":
