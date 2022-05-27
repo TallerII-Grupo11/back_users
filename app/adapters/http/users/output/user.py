@@ -17,6 +17,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
+    location: Optional[str]
     status: Optional[str]
     role: Optional[str]
 
