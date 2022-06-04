@@ -40,8 +40,8 @@ class User(BaseModel):
         return self.id == other.id
 
     def update(self, user: "User"):
-        self.update_status(user.status)
-        self.update_role(user.role)
+        self.status = user.status
+        self.role = user.role
         self.firebase_id = user.firebase_id
         self.email = user.email
         self.first_name = user.first_name
