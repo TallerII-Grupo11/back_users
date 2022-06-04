@@ -3,6 +3,7 @@ import uvicorn
 
 from app.adapters.http.health import health_controller
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware
 import logging.config
 
@@ -36,6 +37,16 @@ app = FastAPI(
 )
 
 app.add_middleware(DBSessionMiddleware, db_url=settings.database_url)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 logger = logging.getLogger(__name__)
 
