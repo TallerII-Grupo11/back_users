@@ -9,8 +9,6 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    networks:
-      - users-net
   web:
     build:
       context: .
@@ -21,8 +19,6 @@ services:
       - "3000:5000"
     depends_on:
       - db
-    networks:
-      - users-net
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
@@ -33,8 +29,3 @@ services:
       - "5050:80"
     depends_on:
       - db
-    networks:
-      - users-net
-networks:
-  users-net:
-    driver: "bridge"
