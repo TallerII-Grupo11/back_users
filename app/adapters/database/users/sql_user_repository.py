@@ -59,12 +59,14 @@ class SQLUserRepository(UserRepository):
         self,
         firebase_id: Optional[str] = None,
         email: Optional[str] = None,
+        user_ids: Optional[str] = None,
         offset: int = 0,
         limit: int = 100,
     ) -> List[User]:
         query = self.session.query(UserDTO)
-        print(f'email -> {email}')
-        print(f'firebase -> {firebase_id}')
+        if user_ids:
+            user_ids_list = user_ids.split(',')
+            query = query.where(UserDTO.id.in_(user_ids_list))
         if firebase_id:
             query = query.filter_by(firebase_id=firebase_id)
         if email:

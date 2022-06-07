@@ -25,10 +25,11 @@ logger = logging.getLogger(__name__)
 async def user_query(
     firebase_id: Optional[str] = None,
     email: Optional[str] = None,
+    user_ids: Optional[str] = None,
     offset: int = 0,
     limit: int = 100,
 ) -> UserQuery:
-    return UserQuery(firebase_id=firebase_id, email=email, offset=offset, limit=limit)
+    return UserQuery(firebase_id=firebase_id, email=email, user_ids=user_ids, offset=offset, limit=limit)
 
 
 @router.get(

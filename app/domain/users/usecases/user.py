@@ -24,6 +24,7 @@ class UserUseCases:
         return self.user_uow.repository.all(
             user_query.firebase_id,
             user_query.email,
+            user_query.user_ids,
             user_query.offset,
             user_query.limit,
         )
