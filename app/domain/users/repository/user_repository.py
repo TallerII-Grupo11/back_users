@@ -20,7 +20,12 @@ class UserRepository(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def all(
-        self, firebase_id: Optional[str], email: Optional[str], offset: int, limit: int
+        self,
+        firebase_id: Optional[str],
+        email: Optional[str],
+        user_ids: Optional[str],
+        offset: int,
+        limit: int,
     ) -> List[User]:
         raise NotImplementedError
 
