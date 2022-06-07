@@ -29,7 +29,13 @@ async def user_query(
     offset: int = 0,
     limit: int = 100,
 ) -> UserQuery:
-    return UserQuery(firebase_id=firebase_id, email=email, user_ids=user_ids, offset=offset, limit=limit)
+    return UserQuery(
+        firebase_id=firebase_id,
+        email=email,
+        user_ids=user_ids,
+        offset=offset,
+        limit=limit,
+    )
 
 
 @router.get(
