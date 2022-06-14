@@ -1,5 +1,7 @@
+from functools import lru_cache
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 from app.conf.config import Settings
 
@@ -16,3 +18,8 @@ def get_session_factory(settings: Settings):
     engine = create_engine(get_database_url(settings.database_url))
     # UserDTO.__table__.create(bind=engine, checkfirst=True)
     return sessionmaker(bind=engine, autocommit=False, autoflush=False)
+
+
+@lru_cache
+def get_declarative_base():
+    return declarative_base()

@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from dotenv import load_dotenv
-from app.adapters.database.users.model import Base
+from app.adapters.database.database import get_declarative_base
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
@@ -34,6 +34,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # target_metadata = mymodel.Base.metadata
+Base = get_declarative_base()
 target_metadata = Base.metadata
 
 
