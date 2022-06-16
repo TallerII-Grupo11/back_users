@@ -26,6 +26,19 @@ from app.domain.users.model.user_exceptions import (
     UsersBlockedException,
 )
 
+from app.adapters.http.admin import admin_controller
+from app.adapters.http.admin.exceptions_handler import (
+    admin_already_exist_exception_handler,
+    admin_not_found_exception_handler,
+    admin_blocked_exception_handler,
+)
+
+from app.domain.admins.model.admin_exceptions import (
+    AdminAlreadyExistException,
+    AdminsNotFoundError,
+    AdminsBlockedException,
+)
+
 from app.conf.config import Settings
 
 logging.config.fileConfig('app/conf/logging.conf', disable_existing_loggers=False)
@@ -61,6 +74,7 @@ async def shutdown():
     logger.info("Shutdown APP")
 
 
+app.include_router(admin_controller.router)
 app.include_router(users_controller.router)
 app.include_router(health_controller.router)
 
@@ -77,6 +91,13 @@ app.add_exception_handler(UsersNotFoundError, user_not_found_exception_handler)
 app.add_exception_handler(InvalidCredentialsError, wrong_credentials_exception_handler)
 
 app.add_exception_handler(UsersBlockedException, user_blocked_exception_handler)
+
+app.add_exception_handler(
+    AdminAlreadyExistException, admin_already_exist_exception_handler
+)
+app.add_exception_handler(AdminsNotFoundError, admin_not_found_exception_handler)
+
+app.add_exception_handler(AdminsBlockedException, admin_blocked_exception_handler)
 
 
 if __name__ == "__main__":

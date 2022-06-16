@@ -4,9 +4,14 @@ from typing import Iterator
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
+from app.adapters.database.admins.sql_admin_repository import SQLAdminRepository
+from app.adapters.database.admins.unit_of_work import AdminUnitOfWork
 from app.adapters.database.database import get_session_factory
 from app.adapters.database.users.sql_user_repository import SQLUserRepository
 from app.adapters.database.users.unit_of_work import UserUnitOfWork
+from app.domain.admins.repository.admin_repository import AdminRepository
+from app.domain.admins.repository.unit_of_work import AbstractAdminUnitOfWork
+from app.domain.admins.usecases.admin import AdminUseCases
 from app.domain.users.repository.unit_of_work import AbstractUserUnitOfWork
 from app.domain.users.repository.user_repository import UserRepository
 from app.conf.config import Settings
@@ -33,6 +38,12 @@ def user_repository_dependency(
     return SQLUserRepository(session)
 
 
+def admin_repository_dependency(
+    session: Session = Depends(get_session),
+) -> AdminRepository:
+    return SQLAdminRepository(session)
+
+
 def user_uow_dependency(
     session: Session = Depends(get_session),
     user_repository: UserRepository = Depends(user_repository_dependency),
@@ -40,7 +51,20 @@ def user_uow_dependency(
     return UserUnitOfWork(user_repository, session)
 
 
+def admin_uow_dependency(
+    session: Session = Depends(get_session),
+    admin_repository: AdminRepository = Depends(admin_repository_dependency),
+) -> AbstractAdminUnitOfWork:
+    return AdminUnitOfWork(admin_repository, session)
+
+
 def user_usecases_dependency(
     user_uow: AbstractUserUnitOfWork = Depends(user_uow_dependency),
 ) -> UserUseCases:
     return UserUseCases(user_uow)
+
+
+def admin_usecases_dependency(
+    admin_uow: AbstractAdminUnitOfWork = Depends(admin_uow_dependency),
+) -> AdminUseCases:
+    return AdminUseCases(admin_uow)
