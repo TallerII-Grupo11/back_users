@@ -17,6 +17,9 @@ from app.domain.users.usecases.user import UserUseCases
 
 # from app.dependencies.dependencies import user_token_validation
 from app.domain.users.query.user_query import UserQuery
+# from datadog.datadog_metrics import DataDogMetric
+
+# datadog = DataDogMetric()
 
 router = APIRouter(tags=["users"])
 logger = logging.getLogger(__name__)
@@ -61,6 +64,7 @@ async def create_users(
     user_usecases: UserUseCases = Depends(user_usecases_dependency),
 ):
     logger.info("Create user called")
+    # datadog.new_user() 
     return user_usecases.register(user_request.to_create_user_command())
 
 

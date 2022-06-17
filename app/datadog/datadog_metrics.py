@@ -17,59 +17,60 @@ ENVIRON = f"spotifiuby:{os.environ.get('ENVIRONMENT', 'test')}"
     CA 6: Métricas de recupero de contraseña
 """
 
+class DataDogMetric():
 
-def update_users():
-    statsd.gauge(
-        'spotifiuby.total-users', 10, tags=[ENVIRON],
-    )
-
-
-def new_login():
-    """Métricas de login de usuarios utilizando mail y contraseña"""
-    statsd.increment('spotifiuby.new-login', tags=[ENVIRON])
+    def update_users(self):
+        statsd.gauge(
+            'spotifiuby.total-users', 10, tags=[ENVIRON],
+        )
 
 
-def new_user():
-    """Métricas de nuevos usuarios utilizando mail y contraseña"""
-    statsd.increment('spotifiuby.new-user', tags=[ENVIRON])
-    update_users()
+    def new_login(self):
+        """Métricas de login de usuarios utilizando mail y contraseña"""
+        statsd.increment('spotifiuby.new-login', tags=[ENVIRON])
 
 
-def new_login_federated():
-    """Métricas de login de usuarios utilizando identidad federada"""
-    metric = 'spotifiuby.new-login-federated'
-    statsd.increment(metric, tags=[ENVIRON])
-
-
-def new_user_federated():
-    """Métricas de nuevos usuarios utilizando identidad federada"""
-    metric = 'spotifiuby.new-user-federated'
-    statsd.increment(metric, tags=[ENVIRON])
-    update_users()
-
-
-def update_blocked_users():
-    """Métricas de usuarios bloqueados"""
-    statsd.gauge(
-        'spotifiuby.blocked-users',
-        10,  # obtener los usuarios bloqueados por una query a la bdd
-        tags=[ENVIRON],
-    )
-
-
-def password_reset():
-    """Métricas de recupero de contraseña"""
-    statsd.increment('spotifiuby.password-reset', tags=[ENVIRON])
-
-
-def start(new_app):
-    options = {'statsd_host': '127.0.0.1', 'statsd_port': 8125}
-    initialize(**options)
-    statsd.start()
-
-    if os.environ.get('ENVIRONMENT', 'test') == 'test':
-        return
-
-    with new_app.app_context():
-        update_blocked_users()
+    def new_user(self):
+        """Métricas de nuevos usuarios utilizando mail y contraseña"""
+        statsd.increment('spotifiuby.new-user', tags=[ENVIRON])
         update_users()
+
+
+    def new_login_federated(self):
+        """Métricas de login de usuarios utilizando identidad federada"""
+        metric = 'spotifiuby.new-login-federated'
+        statsd.increment(metric, tags=[ENVIRON])
+
+
+    def new_user_federated(self):
+        """Métricas de nuevos usuarios utilizando identidad federada"""
+        metric = 'spotifiuby.new-user-federated'
+        statsd.increment(metric, tags=[ENVIRON])
+        update_users()
+
+
+    def update_blocked_users(self):
+        """Métricas de usuarios bloqueados"""
+        statsd.gauge(
+            'spotifiuby.blocked-users',
+            10,  # obtener los usuarios bloqueados por una query a la bdd
+            tags=[ENVIRON],
+        )
+
+
+    def password_reset(self):
+        """Métricas de recupero de contraseña"""
+        statsd.increment('spotifiuby.password-reset', tags=[ENVIRON])
+
+
+    def start(self, new_app):
+        options = {'statsd_host': '127.0.0.1', 'statsd_port': 8125}
+        initialize(**options)
+        statsd.start()
+
+        if os.environ.get('ENVIRONMENT', 'test') == 'test':
+            return
+
+        with new_app.app_context():
+            update_blocked_users()
+            update_users()
