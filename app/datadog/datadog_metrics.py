@@ -32,7 +32,7 @@ class DataDogMetric():
     def new_user(self):
         """Métricas de nuevos usuarios utilizando mail y contraseña"""
         statsd.increment('spotifiuby.new-user', tags=[ENVIRON])
-        update_users()
+        self.update_users()
 
     def new_login_federated(self):
         """Métricas de login de usuarios utilizando identidad federada"""
@@ -43,7 +43,7 @@ class DataDogMetric():
         """Métricas de nuevos usuarios utilizando identidad federada"""
         metric = 'spotifiuby.new-user-federated'
         statsd.increment(metric, tags=[ENVIRON])
-        update_users()
+        self.update_users()
 
     def update_blocked_users(self):
         """Métricas de usuarios bloqueados"""
