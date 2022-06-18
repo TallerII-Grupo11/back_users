@@ -53,6 +53,17 @@ class SQLAdminRepository(AdminRepository):
             raise
         return admin_dto.to_entity()
 
+    def find_by_firebase_id(self, firebase_id: str) -> Admin:
+        try:
+            admin_dto = (
+                self.session.query(AdminDTO).filter_by(firebase_id=firebase_id).one()
+            )
+        except NoResultFound:
+            return None
+        except Exception:
+            raise
+        return admin_dto.to_entity()
+
     def all(
         self,
         firebase_id: Optional[str] = None,

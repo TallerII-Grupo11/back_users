@@ -29,8 +29,16 @@ class AdminUseCases:
 
     def register(self, admin_command: AdminCreateCommand) -> Admin:
         try:
-            admin = self.admin_uow.repository.find_by_email(admin_command.email)
-            if admin:
+            admin_by_email = self.admin_uow.repository.find_by_email(
+                admin_command.email
+            )
+            if admin_by_email:
+                raise AdminAlreadyExistException()
+
+            admin_by_firebase_id = self.admin_uow.repository.find_by_firebase_id(
+                admin_command.firebase_id
+            )
+            if admin_by_firebase_id:
                 raise AdminAlreadyExistException()
             admin_id = AdminId(str(uuid.uuid4()))
             admin = Admin(

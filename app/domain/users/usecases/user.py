@@ -31,11 +31,17 @@ class UserUseCases:
 
     def register(self, user_command: UserCreateCommand) -> User:
         try:
-            user = self.user_uow.repository.find_by_email(user_command.email)
-            if user:
+            user_by_email = self.user_uow.repository.find_by_email(user_command.email)
+            if user_by_email:
                 raise UserAlreadyExistException()
+
+            user_by_firebase_id = self.user_uow.repository.find_by_firebase_id(
+                user_command.firebase_id
+            )
+            if user_by_firebase_id:
+                raise UserAlreadyExistException()
+
             user_id = UserId(str(uuid.uuid4()))
-            # user_id = UserId(user_command.firebase_id)
             user = User(
                 id=user_id,
                 firebase_id=user_command.firebase_id,
