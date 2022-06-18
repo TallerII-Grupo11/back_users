@@ -19,6 +19,10 @@ class AdminRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def find_by_firebase_id(self, firebase_id: str) -> Admin:
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def all(
         self,
         firebase_id: Optional[str],
