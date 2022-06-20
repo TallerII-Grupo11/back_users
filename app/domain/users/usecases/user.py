@@ -2,6 +2,8 @@ import logging
 from typing import List
 
 import uuid as uuid
+
+from app.adapters.services.firebase import Firebase
 from app.domain.users.command.user_create_command import UserCreateCommand
 from app.domain.users.command.user_update_command import UserUpdateCommand
 from app.domain.users.command.user_update_role_command import UpdateUserRoleCommand
@@ -17,8 +19,9 @@ from app.domain.users.query.user_query import UserQuery
 
 
 class UserUseCases:
-    def __init__(self, user_uow: AbstractUserUnitOfWork):
+    def __init__(self, user_uow: AbstractUserUnitOfWork, firebase: Firebase):
         self.user_uow: AbstractUserUnitOfWork = user_uow
+        self.firebase: Firebase = firebase
 
     def list(self, user_query: UserQuery) -> List[User]:
         return self.user_uow.repository.all(
@@ -83,6 +86,7 @@ class UserUseCases:
             user.update(updated_user)
             self.user_uow.repository.update(user)
             self.user_uow.commit()
+            self.firebase.update_user(user)
         except Exception as e:
             logging.error(e)
             self.user_uow.rollback()
@@ -102,6 +106,7 @@ class UserUseCases:
             user.update_status(UserStatus(update_user_status_command.status))
             self.user_uow.repository.update(user)
             self.user_uow.commit()
+            self.firebase.update_user(user)
         except Exception as e:
             logging.error(e)
             self.user_uow.rollback()
