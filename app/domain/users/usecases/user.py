@@ -17,6 +17,8 @@ from app.domain.users.model.user_id import UserId
 from app.domain.users.repository.unit_of_work import AbstractUserUnitOfWork
 from app.domain.users.query.user_query import UserQuery
 
+logger = logging.getLogger(__name__)
+
 
 class UserUseCases:
     def __init__(self, user_uow: AbstractUserUnitOfWork, firebase: Firebase):
@@ -58,7 +60,7 @@ class UserUseCases:
             self.user_uow.commit()
             return self.user_uow.repository.find_by_id(user_id)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 
@@ -87,8 +89,9 @@ class UserUseCases:
             self.user_uow.repository.update(user)
             self.user_uow.commit()
             self.firebase.update_user(user)
+            logger.info("Firebase update completed")
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 
@@ -107,8 +110,9 @@ class UserUseCases:
             self.user_uow.repository.update(user)
             self.user_uow.commit()
             self.firebase.update_user(user)
+            logger.info("Firebase update completed")
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 
@@ -125,7 +129,7 @@ class UserUseCases:
             self.user_uow.repository.update(user)
             self.user_uow.commit()
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 

@@ -1,3 +1,5 @@
+import logging
+
 import firebase_admin
 from firebase_admin import auth, credentials
 
@@ -15,7 +17,11 @@ class Singleton(type):
         return cls._instances[cls]
 
 
+logger = logging.getLogger(__name__)
+
+
 class Firebase(metaclass=Singleton):
+
     def __init__(self, settings: Settings):
         opt = {
             "projectId": settings.firebase_project_id,
@@ -34,11 +40,12 @@ class Firebase(metaclass=Singleton):
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
             "client_x509_cert_url": settings.firebase_client_cert_url,
         }
-        print(dict(cred))
+        logger.debug(dict(cred))
         cc = credentials.Certificate(dict(cred))
         self.app = firebase_admin.initialize_app(
             credential=cc, options=opt, name="users"
         )
+        logger.info("Firebase connection succeeded")
 
     def update_user(self, user: User):
         disabled = UserStatus.BLOCKED == user.status
