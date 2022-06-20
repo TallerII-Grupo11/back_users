@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import auth, credentials
 
 from app.conf.config import Settings
+from app.domain.admins.model.admin import Admin, AdminStatus
 from app.domain.users.model.user import User, UserStatus
 
 
@@ -35,12 +36,9 @@ class Firebase(metaclass=Singleton):
         }
         print(dict(cred))
         cc = credentials.Certificate(dict(cred))
-        self.app_users = firebase_admin.initialize_app(
+        self.app = firebase_admin.initialize_app(
             credential=cc, options=opt, name="users"
         )
-        # self.app_admins = firebase_admin.initialize_app(
-        #     credential=cc, options=opt, name="Admins"
-        # )
 
     def update_user(self, user: User):
         disabled = UserStatus.BLOCKED == user.status
@@ -48,14 +46,14 @@ class Firebase(metaclass=Singleton):
             user.firebase_id,
             email=user.email,
             disabled=disabled,
-            app=self.app_users,
+            app=self.app,
         )
 
-    # def update_admin(self, admin: Admin):
-    #     disabled = AdminStatus.BLOCKED == admin.status
-    #     return auth.update_user(
-    #         admin.firebase_id,
-    #         email=admin.email,
-    #         disabled=disabled,
-    #         app=self.app_admins,
-    #     )
+    def update_admin(self, admin: Admin):
+        disabled = AdminStatus.BLOCKED == admin.status
+        return auth.update_user(
+            admin.firebase_id,
+            email=admin.email,
+            disabled=disabled,
+            app=self.app,
+        )

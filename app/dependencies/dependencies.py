@@ -72,5 +72,6 @@ def user_usecases_dependency(
 
 def admin_usecases_dependency(
     admin_uow: AbstractAdminUnitOfWork = Depends(admin_uow_dependency),
+    firebase: Firebase = Depends(firebase_service_dependency),
 ) -> AdminUseCases:
-    return AdminUseCases(admin_uow)
+    return AdminUseCases(admin_uow, firebase)
