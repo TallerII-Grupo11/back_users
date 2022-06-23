@@ -2,6 +2,8 @@ import logging
 from typing import List
 
 import uuid as uuid
+
+from app.datadog.datadog_metrics import DataDogMetric
 from app.domain.users.command.user_create_command import UserCreateCommand
 from app.domain.users.command.user_update_command import UserUpdateCommand
 from app.domain.users.command.user_update_role_command import UpdateUserRoleCommand
@@ -14,6 +16,10 @@ from app.domain.users.model.user_exceptions import (
 from app.domain.users.model.user_id import UserId
 from app.domain.users.repository.unit_of_work import AbstractUserUnitOfWork
 from app.domain.users.query.user_query import UserQuery
+
+
+def user_is_now_blocked(old_status: UserStatus, new_status: UserStatus) -> bool:
+    return old_status == UserStatus.ACTIVE and new_status == UserStatus.BLOCKED
 
 
 class UserUseCases:
@@ -47,6 +53,8 @@ class UserUseCases:
             )
             self.user_uow.repository.save(user)
             self.user_uow.commit()
+            DataDogMetric.new_user()
+            # TODO: new federated user
             return self.user_uow.repository.find_by_id(user_id)
         except Exception as e:
             logging.error(e)
@@ -74,9 +82,13 @@ class UserUseCases:
                 role=user_command.role,
                 status=user_command.status,
             )
+            old_status = user.status
+            new_status = updated_user.status
             user.update(updated_user)
             self.user_uow.repository.update(user)
             self.user_uow.commit()
+            if user_is_now_blocked(old_status, new_status):
+                DataDogMetric.blocked_user()
         except Exception as e:
             logging.error(e)
             self.user_uow.rollback()
@@ -93,9 +105,13 @@ class UserUseCases:
         if user is None:
             raise UsersNotFoundError(update_user_status_command.user_id)
         try:
-            user.update_status(UserStatus(update_user_status_command.status))
+            old_status = user.status
+            new_status = UserStatus(update_user_status_command.status)
+            user.update_status(new_status)
             self.user_uow.repository.update(user)
             self.user_uow.commit()
+            if user_is_now_blocked(old_status, new_status):
+                DataDogMetric.blocked_user()
         except Exception as e:
             logging.error(e)
             self.user_uow.rollback()
