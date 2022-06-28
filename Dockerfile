@@ -37,6 +37,6 @@ ENV DD_APM_ENABLED=true
 # Copy Datadog configuration
 COPY docker/datadog-config/ /etc/datadog-agent/
 
-EXPOSE 5090
+EXPOSE 5000
 # Use heroku entrypoint
 CMD ["bash", "entrypoint.sh"]
