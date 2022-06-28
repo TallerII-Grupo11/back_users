@@ -16,6 +16,7 @@ alembic = "^1.7.7"
 FastAPI-SQLAlchemy = "^0.2.1"
 psycopg2 = "^2.9.3"
 datadog = "^0.41.0"
+httpx = "^0.23.0"
 
 [tool.pytest.ini_options]
 pythonpath = [
