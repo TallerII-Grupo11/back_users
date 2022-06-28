@@ -55,7 +55,3 @@ class DataDogMetric:
     def password_reset():
         """Métricas de recupero de contraseña"""
         DataDogMetric.increment("spotifiuby.password-reset")
-
-    @staticmethod
-    def test():
-        DataDogMetric.increment("test")
