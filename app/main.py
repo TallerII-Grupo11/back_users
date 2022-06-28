@@ -1,6 +1,7 @@
 import uvicorn
 
 
+from app.adapters.http.events import events_controller
 from app.adapters.http.health import health_controller
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -76,6 +77,7 @@ async def shutdown():
 
 app.include_router(admin_controller.router)
 app.include_router(users_controller.router)
+app.include_router(events_controller.router)
 app.include_router(health_controller.router)
 
 app.add_exception_handler(
