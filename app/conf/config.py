@@ -14,6 +14,13 @@ class Settings(BaseSettings):
     database_url: str
     version_prefix: str
     port: int = 5000
+    firebase_project_id: str
+    firebase_private_key_id: str
+    firebase_private_key: str
+    firebase_client_email: str
+    firebase_client_id: str
+    firebase_client_cert_url: str
+    firebase_storage_bucket: str
 
     class Config:
         BASE_DIR = os.path.dirname(os.path.abspath("../.env"))

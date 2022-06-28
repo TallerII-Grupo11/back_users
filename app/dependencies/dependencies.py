@@ -9,6 +9,7 @@ from app.adapters.database.admins.unit_of_work import AdminUnitOfWork
 from app.adapters.database.database import get_session_factory
 from app.adapters.database.users.sql_user_repository import SQLUserRepository
 from app.adapters.database.users.unit_of_work import UserUnitOfWork
+from app.adapters.services.firebase import Firebase
 from app.domain.admins.repository.admin_repository import AdminRepository
 from app.domain.admins.repository.unit_of_work import AbstractAdminUnitOfWork
 from app.domain.admins.usecases.admin import AdminUseCases
@@ -58,13 +59,19 @@ def admin_uow_dependency(
     return AdminUnitOfWork(admin_repository, session)
 
 
+def firebase_service_dependency(settings: Settings = Depends(get_settings)) -> Firebase:
+    return Firebase(settings)
+
+
 def user_usecases_dependency(
     user_uow: AbstractUserUnitOfWork = Depends(user_uow_dependency),
+    firebase: Firebase = Depends(firebase_service_dependency),
 ) -> UserUseCases:
-    return UserUseCases(user_uow)
+    return UserUseCases(user_uow, firebase)
 
 
 def admin_usecases_dependency(
     admin_uow: AbstractAdminUnitOfWork = Depends(admin_uow_dependency),
+    firebase: Firebase = Depends(firebase_service_dependency),
 ) -> AdminUseCases:
-    return AdminUseCases(admin_uow)
+    return AdminUseCases(admin_uow, firebase)
