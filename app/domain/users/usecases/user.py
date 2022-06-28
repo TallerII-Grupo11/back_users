@@ -3,6 +3,8 @@ from typing import List
 
 import uuid as uuid
 
+from app.adapters.services.firebase import Firebase
+
 from app.datadog.datadog_metrics import DataDogMetric
 from app.domain.users.command.user_create_command import UserCreateCommand
 from app.domain.users.command.user_update_command import UserUpdateCommand
@@ -17,14 +19,17 @@ from app.domain.users.model.user_id import UserId
 from app.domain.users.repository.unit_of_work import AbstractUserUnitOfWork
 from app.domain.users.query.user_query import UserQuery
 
+logger = logging.getLogger(__name__)
+
 
 def user_is_now_blocked(old_status: UserStatus, new_status: UserStatus) -> bool:
     return old_status == UserStatus.ACTIVE and new_status == UserStatus.BLOCKED
 
 
 class UserUseCases:
-    def __init__(self, user_uow: AbstractUserUnitOfWork):
+    def __init__(self, user_uow: AbstractUserUnitOfWork, firebase: Firebase):
         self.user_uow: AbstractUserUnitOfWork = user_uow
+        self.firebase: Firebase = firebase
 
     def list(self, user_query: UserQuery) -> List[User]:
         return self.user_uow.repository.all(
@@ -63,7 +68,7 @@ class UserUseCases:
             # TODO: new federated user
             return self.user_uow.repository.find_by_id(user_id)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 
@@ -93,10 +98,12 @@ class UserUseCases:
             user.update(updated_user)
             self.user_uow.repository.update(user)
             self.user_uow.commit()
+            self.firebase.update_user(user)
+            logger.info("Firebase update completed")
             if user_is_now_blocked(old_status, new_status):
                 DataDogMetric.blocked_user()
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 
@@ -116,10 +123,12 @@ class UserUseCases:
             user.update_status(new_status)
             self.user_uow.repository.update(user)
             self.user_uow.commit()
+            self.firebase.update_user(user)
+            logger.info("Firebase update completed")
             if user_is_now_blocked(old_status, new_status):
                 DataDogMetric.blocked_user()
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 
@@ -136,7 +145,7 @@ class UserUseCases:
             self.user_uow.repository.update(user)
             self.user_uow.commit()
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.user_uow.rollback()
             raise e
 

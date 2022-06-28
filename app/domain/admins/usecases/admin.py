@@ -2,6 +2,8 @@ import logging
 from typing import List
 
 import uuid as uuid
+
+from app.adapters.services.firebase import Firebase
 from app.domain.admins.command.admin_create_command import AdminCreateCommand
 from app.domain.admins.command.admin_update_command import AdminUpdateCommand
 from app.domain.admins.model.admin import Admin
@@ -13,10 +15,13 @@ from app.domain.admins.model.admin_id import AdminId
 from app.domain.admins.repository.unit_of_work import AbstractAdminUnitOfWork
 from app.domain.admins.query.admin_query import AdminQuery
 
+logger = logging.getLogger(__name__)
+
 
 class AdminUseCases:
-    def __init__(self, admin_uow: AbstractAdminUnitOfWork):
+    def __init__(self, admin_uow: AbstractAdminUnitOfWork, firebase: Firebase):
         self.admin_uow: AbstractAdminUnitOfWork = admin_uow
+        self.firebase: Firebase = firebase
 
     def list(self, admin_query: AdminQuery) -> List[Admin]:
         return self.admin_uow.repository.all(
@@ -52,7 +57,7 @@ class AdminUseCases:
             self.admin_uow.commit()
             return self.admin_uow.repository.find_by_id(admin_id)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.admin_uow.rollback()
             raise e
 
@@ -78,8 +83,10 @@ class AdminUseCases:
             admin.update(updated_admin)
             self.admin_uow.repository.update(admin)
             self.admin_uow.commit()
+            self.firebase.update_admin(admin)
+            logger.info("Firebase update completed")
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             self.admin_uow.rollback()
             raise e
 
