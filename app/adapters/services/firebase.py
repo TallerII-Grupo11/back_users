@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 class Firebase(metaclass=Singleton):
-
     def __init__(self, settings: Settings):
         opt = {
             "projectId": settings.firebase_project_id,
