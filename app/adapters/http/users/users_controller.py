@@ -15,7 +15,6 @@ from app.domain.users.command.user_update_role_command import UpdateUserRoleComm
 from app.domain.users.command.user_update_status_command import UpdateUserStatusCommand
 from app.domain.users.usecases.user import UserUseCases
 
-# from app.dependencies.dependencies import user_token_validation
 from app.domain.users.query.user_query import UserQuery
 
 router = APIRouter(tags=["users"])
