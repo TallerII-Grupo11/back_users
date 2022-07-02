@@ -73,8 +73,9 @@ def firebase_service_dependency(settings: Settings = Depends(get_settings)) -> F
 def user_usecases_dependency(
     user_uow: AbstractUserUnitOfWork = Depends(user_uow_dependency),
     firebase: Firebase = Depends(firebase_service_dependency),
+    rest_metrics: QueueMetricsClient = Depends(get_restclient_metrics),
 ) -> UserUseCases:
-    return UserUseCases(user_uow, firebase)
+    return UserUseCases(user_uow, firebase, rest_metrics)
 
 
 def admin_usecases_dependency(

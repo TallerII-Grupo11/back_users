@@ -3,6 +3,7 @@ from typing import List
 
 import uuid as uuid
 
+from app.adapters.rest.queue_metrics_client import QueueMetricsClient
 from app.adapters.services.firebase import Firebase
 
 from app.datadog.datadog_metrics import DataDogMetric
@@ -27,9 +28,15 @@ def user_is_now_blocked(old_status: UserStatus, new_status: UserStatus) -> bool:
 
 
 class UserUseCases:
-    def __init__(self, user_uow: AbstractUserUnitOfWork, firebase: Firebase):
+    def __init__(
+        self,
+        user_uow: AbstractUserUnitOfWork,
+        firebase: Firebase,
+        rest_metrics: QueueMetricsClient,
+    ):
         self.user_uow: AbstractUserUnitOfWork = user_uow
         self.firebase: Firebase = firebase
+        self.rest_metrics: QueueMetricsClient = rest_metrics
 
     def list(self, user_query: UserQuery) -> List[User]:
         return self.user_uow.repository.all(
@@ -127,6 +134,10 @@ class UserUseCases:
             logger.info("Firebase update completed")
             if user_is_now_blocked(old_status, new_status):
                 DataDogMetric.blocked_user()
+                try:
+                    self.rest_metrics.record_user_blocked()
+                except Exception as e:
+                    logger.error("Error in Queue Metrics request: ", e)
         except Exception as e:
             logger.error(e)
             self.user_uow.rollback()

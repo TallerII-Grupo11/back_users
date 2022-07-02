@@ -27,3 +27,10 @@ class QueueMetricsClient:
             r.raise_for_status()
 
         return MetricResponseDto(**r.json())
+
+    def record_user_blocked(self) -> MetricResponseDto:
+        r = httpx.post(f'{self.api_url}/blocked')
+        if r.status_code != httpx.codes.OK:
+            r.raise_for_status()
+
+        return MetricResponseDto(**r.json())
