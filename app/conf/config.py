@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     firebase_client_id: str
     firebase_client_cert_url: str
     firebase_storage_bucket: str
+    queue_metrics_url: str
 
     class Config:
         BASE_DIR = os.path.dirname(os.path.abspath("../.env"))

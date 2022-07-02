@@ -10,7 +10,11 @@ from app.adapters.http.users.input.user import (
     UserRoleRequest,
 )
 from app.adapters.http.users.output.user import UserResponse
-from app.dependencies.dependencies import user_usecases_dependency
+from app.adapters.rest.queue_metrics_client import QueueMetricsClient
+from app.dependencies.dependencies import (
+    user_usecases_dependency,
+    get_restclient_metrics,
+)
 from app.domain.users.command.user_update_role_command import UpdateUserRoleCommand
 from app.domain.users.command.user_update_status_command import UpdateUserStatusCommand
 from app.domain.users.usecases.user import UserUseCases
@@ -58,9 +62,18 @@ async def get_users(
 async def create_users(
     user_request: UserRequest,
     user_usecases: UserUseCases = Depends(user_usecases_dependency),
+    rest_metrics: QueueMetricsClient = Depends(get_restclient_metrics),
 ):
     logger.info("Create user called")
-    return user_usecases.register(user_request.to_create_user_command())
+    user = user_usecases.register(user_request.to_create_user_command())
+
+    try:
+        # TODO: Federated user
+        rest_metrics.record_new_user(False)
+    except Exception as e:
+        logger.error("Error in Queue Metrics request: ", e)
+
+    return user
 
 
 @router.get(
@@ -71,7 +84,6 @@ async def create_users(
 async def get_user(
     user_id: str,
     user_usecases: UserUseCases = Depends(user_usecases_dependency),
-    # user_from_token=Depends(user_token_validation),
 ):
     logger.info("Get user by id called")
     user = user_usecases.find_by_id(user_id)
@@ -86,7 +98,6 @@ async def get_user(
 async def update_users(
     user_id: str,
     user_request: UserUpdateRequest,
-    # user_from_token=Depends(user_token_validation),
     user_usecases: UserUseCases = Depends(user_usecases_dependency),
 ):
     logger.info("Update user called")
@@ -101,7 +112,6 @@ async def update_users(
 async def update_users_status(
     user_id: str,
     user_status_request: UserStatusRequest,
-    # user_from_token=Depends(user_token_validation),
     user_usecases: UserUseCases = Depends(user_usecases_dependency),
 ):
     logger.info("Update user status called")
@@ -118,7 +128,6 @@ async def update_users_status(
 async def update_users_role(
     user_id: str,
     user_role_request: UserRoleRequest,
-    # user_from_token=Depends(user_token_validation),
     user_usecases: UserUseCases = Depends(user_usecases_dependency),
 ):
     logger.info("Update user role called")

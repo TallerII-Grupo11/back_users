@@ -9,6 +9,7 @@ from app.adapters.database.admins.unit_of_work import AdminUnitOfWork
 from app.adapters.database.database import get_session_factory
 from app.adapters.database.users.sql_user_repository import SQLUserRepository
 from app.adapters.database.users.unit_of_work import UserUnitOfWork
+from app.adapters.rest.queue_metrics_client import QueueMetricsClient
 from app.adapters.services.firebase import Firebase
 from app.domain.admins.repository.admin_repository import AdminRepository
 from app.domain.admins.repository.unit_of_work import AbstractAdminUnitOfWork
@@ -22,6 +23,12 @@ from app.domain.users.usecases.user import UserUseCases
 @lru_cache()
 def get_settings():
     return Settings()
+
+
+def get_restclient_metrics(
+    settings: Settings = Depends(get_settings),
+) -> QueueMetricsClient:
+    return QueueMetricsClient(settings.queue_metrics_url)
 
 
 def get_session(settings: Settings = Depends(get_settings)) -> Iterator[Session]:
@@ -66,8 +73,9 @@ def firebase_service_dependency(settings: Settings = Depends(get_settings)) -> F
 def user_usecases_dependency(
     user_uow: AbstractUserUnitOfWork = Depends(user_uow_dependency),
     firebase: Firebase = Depends(firebase_service_dependency),
+    rest_metrics: QueueMetricsClient = Depends(get_restclient_metrics),
 ) -> UserUseCases:
-    return UserUseCases(user_uow, firebase)
+    return UserUseCases(user_uow, firebase, rest_metrics)
 
 
 def admin_usecases_dependency(
