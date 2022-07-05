@@ -109,15 +109,15 @@ class TestQueueMetricsClient(unittest.TestCase):
             return_value=get_mocked_response(500, mocked_metric_response))
         client = QueueMetricsClient(self.test_url)
         self.assertRaises(
-            Exception, client.record_login
+            Exception, client.record_login, False
         )
 
     @respx.mock
-    def test_login_error(self, respx_mock):
+    def test_new_user_error(self, respx_mock):
         mocked_metric_response = MetricResponseDto(id="id", name="name")
         respx_mock.post(f"{self.test_url}/users").mock(
             return_value=get_mocked_response(500, mocked_metric_response))
         client = QueueMetricsClient(self.test_url)
         self.assertRaises(
-            Exception, client.record_new_user
+            Exception, client.record_new_user, False
         )
