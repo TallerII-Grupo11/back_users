@@ -15,7 +15,9 @@ def get_database_url(database_url: str) -> str:
 
 
 def get_session_factory(settings: Settings):
-    engine = create_engine(get_database_url(settings.database_url))
+    engine = create_engine(
+        get_database_url(settings.database_url), pool_pre_ping=True, pool_recycle=900
+    )
     # UserDTO.__table__.create(bind=engine, checkfirst=True)
     return sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
