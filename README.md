@@ -15,6 +15,11 @@ http://spotifiuby-back-users.herokuapp.com/docs
 - Python 3.9
 - Poetry
 
+Install with:
+```bash
+poetry install
+```
+
 
 ### Test
 
@@ -27,9 +32,20 @@ pytest tests/
 
 ### Docker
 
+This require an active postgres SQL database set up in .env file
+
 ``` bash
 docker build -t back-users:0.1 .
 docker run -p 5000:5000 --env-file .env back-users:0.1
+```
+
+### Docker-compose
+
+Local postgres image built in with Docker image. Use database url already set up in example .env
+
+```bash
+docker-compose build
+docker-compose up
 ```
 
 
